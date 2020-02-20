@@ -1,11 +1,5 @@
 import React from "react";
-
-const NumberColor = {
-    'available': 'lightgray',
-    'used': 'lightgreen',
-    'wrong': 'lightcoral',
-    'candidate': 'deepskyblue',
-};
+import {NumberColor} from "../constants/GameConstants";
 
 const NumberButton = props => (
     <button

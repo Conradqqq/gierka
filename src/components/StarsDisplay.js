@@ -1,9 +1,10 @@
 import React from "react";
 import utils from "../utils/utils";
+import {GameStatus} from "../constants/GameConstants";
 
 const StarsDisplay = props => {
     {
-        if (props.gameStatus === 'end') {
+        if (props.gameStatus === GameStatus.END) {
             return <button className="game-done" onClick={props.resetGame}>
                 Play again
             </button>

@@ -1,8 +1,8 @@
-import GameStatus from "../../constants/GameConstants";
+import {GameStatus, GameAction} from "../../constants/GameConstants";
 import utils from "../../utils/utils";
 
 const numberClick = (state, number) => {
-    if (state.candidates.includes(number) || state.gameStatus === "end") {
+    if (state.candidates.includes(number) || state.gameStatus === GameStatus.END) {
         return {};
     }
 
@@ -15,43 +15,63 @@ const numberClick = (state, number) => {
             starsCount: utils.randomSumIn(newAvailableNumbers, 9),
             availableNumbers: newAvailableNumbers,
             candidates: [],
-            gameStatus: "correct",
+            gameStatus: GameStatus.CORRECT,
         };
     } else if (newCandidatesAreWrong) {
         return {
             candidates: [],
-            gameStatus: "wrong",
+            gameStatus: GameStatus.WRONG,
         };
-    } else {
-        return {
-            candidates: newCandidates,
-        }
     }
+
+    return {
+        candidates: newCandidates,
+    }
+};
+
+const timeTick = (state) => {
+    if (state.gameStatus !== GameStatus.END) {
+        const newTimeLeft = state.timeLeft - 1;
+        return {
+            timeLeft: newTimeLeft,
+            gameStatus: (newTimeLeft === 0) ? GameStatus.END : state.gameStatus
+        };
+    }
+
+    return {};
 };
 
 const initialState = {
     availableNumbers: utils.range(1, 9),
     starsCount: utils.random(1, 9),
     candidates: [],
-    gameStatus: 'start',
-    timeLeft: 5,
+    gameStatus: GameStatus.START,
+    timeLeft: 10,
 };
 
 export default function gameReducer(state = initialState, action) {
     switch(action.type) {
-        case "SELECT_NUMBER":
-            return Object.assign({}, state, {
+        case GameAction.SELECT_NUMBER:
+            return {
+                ...state,
                 ...numberClick(state, action.number)
-            });
-        case "TIME_LEFT":
-            return Object.assign({}, state, {
+            };
+        case GameAction.TIME_LEFT:
+            return {
+                ...state,
                 timeLeft: action.timeLeft
-            });
-        case "GAME_STATUS":
-            return Object.assign({}, state, {
+            };
+        case GameAction.GAME_STATUS:
+            return {
+                ...state,
                 gameStatus: action.gameStatus
-            });
-        case "RESET_GAME":
+            };
+        case GameAction.TIME_TICK:
+            return {
+                ...state,
+                ...timeTick(state)
+            };
+        case GameAction.RESET_GAME:
             return initialState;
         default:
             return state;

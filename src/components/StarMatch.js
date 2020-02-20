@@ -3,7 +3,7 @@ import NumberButton from "./NumberButton";
 import GameStatusLabel from "./GameStatusLabel";
 import StarsDisplay from "./StarsDisplay";
 import utils from "../utils/utils";
-import NumberStatus from "../constants/GameConstants";
+import {GameStatus, NumberStatus} from "../constants/GameConstants";
 import {connect} from "react-redux";
 import * as gameActions from "../redux/actions/gameActions";
 import PropTypes from 'prop-types';
@@ -22,14 +22,7 @@ const StarMatch = (props) => {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            if (props.gameStatus !== "end") {
-                const newTimeLeft = props.timeLeft - 1;
-                props.updateTimeLeft(newTimeLeft);
-                if (newTimeLeft === 0) {
-                    props.updateGameStatus("end");
-                    clearTimeout(timer);
-                }
-            }
+            props.timeTick();
         }, 1000);
 
         return () => clearTimeout(timer);
@@ -84,8 +77,9 @@ function mapStateToProps(state) {
 const mapDispatchToProps = dispatch => {
     return {
         updateGameStatus: (gameStatus) => dispatch(gameActions.updateGameStatus(gameStatus)),
-        updateTimeLeft: (timeLeft) => dispatch(gameActions.updateTimeLeft(timeLeft)),
+        decreaseTimeLeft: (timeLeft) => dispatch(gameActions.updateTimeLeft(timeLeft)),
         selectNumber: (number) => dispatch(gameActions.selectNumber(number)),
+        timeTick: () => dispatch(gameActions.timeTick()),
         resetGame: () => dispatch(gameActions.resetGame()),
     }
 };
